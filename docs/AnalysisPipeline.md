@@ -1458,6 +1458,22 @@ Between-visit ICC(A,1), N=45 (`pipelineRobustness_N45_20261008_222827.csv`):
 
 **Confirmed by the full re-run (2026-11-09).** Dagmar ran `runN48_2026('stage','all')` with the fix in place (`trial_level_results_20261109_112129`, `icc_results_20261109_112131`). `verifyTouchFixRun_2026` confirms the 13,462 clean trials are identical to 3 Nov, the 926 fixed trials match the diagnostic, and the official ICCs equal the interim ones (`touchFixRunCheck_ICC_20261109_113047.csv`). `refreshDownstream_2026` then re-ran trait, stability, shape-5 diagnostic, pipeline robustness, note evidence and figures. `diffRunOutputs_2026('20261103_15','20261109_11')` lists every changed output cell (`runDiff_20261103_15_vs_20261109_11.csv`); `summariseKeyNumbers_2026` and `makeDocTables_2026` regenerate the numbers and tables quoted in `claude.md` and this file. Beta conclusions are unchanged (largest headline shift: Zou N for Ellipse 632 -> 620). The handover was regenerated from this run.
 
+## Retest interval (2026-11-09)
+
+`reportRetestInterval_2026` -> `retestInterval_N48_20261109_161028.csv` (+ `_participants_`). Interval = first session of Visit 1 to first session of Visit 2. The protocol asked for about a week; the real gaps are median 8.0 days (IQR 7.0 to 13.1, range 6.0 to 43.2). 11 of 48 exceed 14 days; 2 exceed 28 (IDs 203 and 204, 19 May to 1 July / 29 June). Within a visit, the 3 sessions fall within 20 to 50 minutes on one day, so the dates are genuine, not a clock fault. Report the interval in the Methods.
+
+Beta_SG6_IRLS ICC(A,1) [95% CI], post hoc sensitivity (footnote level, not pre-registered):
+
+| Shape | All 48 | Gap <= 28 d (n=46) | Gap <= 14 d (n=37) | Spearman gap vs abs(V2-V1) (p) |
+|---|---|---|---|---|
+| phi=0.4 | 0.850 [0.748, 0.913] | 0.853 [0.750, 0.916] | 0.883 [0.786, 0.938] | -0.24 (0.09) |
+| phi=0.8 | 0.878 [0.782, 0.932] | 0.874 [0.769, 0.931] | 0.910 [0.799, 0.957] | -0.15 (0.31) |
+| Ellipse | 0.791 [0.655, 0.877] | 0.807 [0.677, 0.888] | 0.848 [0.726, 0.919] | 0.08 (0.59) |
+| Square | 0.862 [0.765, 0.920] | 0.856 [0.751, 0.918] | 0.826 [0.683, 0.908] | -0.44 (0.002) |
+| Cursive | 0.385 [0.117, 0.601] | 0.373 [0.097, 0.596] | 0.290 [-0.031, 0.558] | 0.27 (0.06) |
+
+Reading: dropping the two 6-week gaps changes ICC by at most 0.016, with no class change. Restricting to <= 14 days raises the phi and Ellipse ICCs by 0.03 to 0.06 and lowers Square and Cursive, all well inside the CIs (and n falls to 37). Longer gaps do not mean larger visit-to-visit change: the only clear association is the opposite sign (Square, rho -0.44, Holm-adjusted p about 0.01 over 5 shapes). The long gaps cluster in particular ID blocks (the 3XX block has most of the 12 to 23 day gaps), so gap is confounded with cohort and experimenter; do not read the Square sign as a real effect. Conclusion: the reliability results do not depend on the uneven interval.
+
 ## Usage
 
 ```matlab
