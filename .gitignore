@@ -1,0 +1,27 @@
+# Code, tests and methods docs only. Participant data and every derived
+# output are released separately (repository with a DOI), never via git.
+data/
+handover/
+reports/
+figures/
+
+# Internal working notes kept off the public repo
+claude.md
+docs/ProjectLog.md
+docs/PublicationTodo.md
+docs/NoveltySearchBrief.md
+docs/README_CATI_MEDL_Continuum_Desiderata_v001.md
+docs/EmailIngestionPipeline.md
+docs/archive/
+
+# Stray and generated files
+email.html
+*.docx
+*.xlsx
+*.eml
+*.mat
+*.asv
+*.mexw64
+__pycache__/
+.DS_Store
+Thumbs.db
