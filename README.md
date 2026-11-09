@@ -29,8 +29,6 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
 - R, with `ICC.Sample.Size`, for the Zou sample-size step only. `test_computeICC_matchesR` also needs `psych` and `irr`.
 - Python 3, standard library only, for the optional email-ingestion scripts.
 
-Keep FieldTrip and GPstuff off the MATLAB path: their `join.m` silently breaks `writetable`. Most writers here re-read the CSV header and stop if it is wrong; `runAnalysis_2026` and `runICC_2026` do not yet.
-
 ## Layout
 
 ```

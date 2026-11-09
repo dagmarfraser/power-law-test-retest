@@ -194,7 +194,7 @@ if ~exist(processedPath, 'dir'), mkdir(processedPath); end
 timestamp = datestr(now, 'yyyymmdd_HHMMSS');
 
 csvFile = fullfile(processedPath, sprintf('icc_results_%s.csv', timestamp));
-writetable(iccResults, csvFile);
+writeTableVerified(iccResults, csvFile);
 fprintf('\nSaved: %s\n', csvFile);
 
 matFile = fullfile(processedPath, sprintf('icc_results_%s.mat', timestamp));

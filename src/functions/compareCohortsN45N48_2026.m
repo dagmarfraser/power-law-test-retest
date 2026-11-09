@@ -283,7 +283,7 @@ if zouDir ~= ""   % Mac route: R output from zouCohort_M5.sh, used only if it wa
         r = readtable(outCSV, 'VariableNamingRule', 'preserve', 'TextType', 'string');
         [tf, loc] = ismember(names(:), r.ShapeName);
         if all(tf) && all(abs(r.ICC_observed(loc) - icc(:)) < 1e-9)
-            nReq = double(r.N_required(loc)); status = "OK(" + tag + " from " + outCSV + ")"; return
+            [~, nm, ex] = fileparts(outCSV); nReq = double(r.N_required(loc)); status = "OK(" + tag + " from " + nm + ex + ")"; return
         end
     end
     warning('compareCohorts:zouPending', ['Zou required N for n=%d NOT computed: %s is missing or was made from other ICCs. ' ...

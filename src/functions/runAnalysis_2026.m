@@ -79,6 +79,9 @@ addpath(scriptDir);
 
 dataPath = fullfile(projectRoot, 'data', 'raw', 'automatic');
 processedPath = fullfile(projectRoot, 'data', 'processed');
+if options.saveResults   % fail now, not after the run, if writetable is broken (join.m shadow)
+    probe = [tempname '.csv']; writeTableVerified(table(1, 'VariableNames', {'probe'}), probe); delete(probe);
+end
 
 if ~exist(processedPath, 'dir'), mkdir(processedPath); end
 
@@ -281,11 +284,11 @@ if options.saveResults
     fprintf('\nSaved: %s\n', matFile);
 
     csvFile = fullfile(processedPath, sprintf('trial_level_results%s_%s.csv', suffix, timestamp));
-    writetable(allResults, csvFile);
+    writeTableVerified(allResults, csvFile);
     fprintf('Saved: %s\n', csvFile);
 
     sumFile = fullfile(processedPath, sprintf('participant_summary%s_%s.csv', suffix, timestamp));
-    writetable(participantSummary, sumFile);
+    writeTableVerified(participantSummary, sumFile);
     fprintf('Saved: %s\n', sumFile);
 end
 
