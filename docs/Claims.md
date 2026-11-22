@@ -116,7 +116,7 @@ From `semReliability_N48_20261115_205624.csv` (`reportSEMReliability_2026`, `ext
 |---|---|---|
 | J1 | Data release staged (current run only, session times as day offsets, MD5 manifest) but NOT published; blocked on consent wording, CATI subscale order (I2) and M-EDL zeros (I3) | open |
 | J2 | Data DOI (Zenodo or OSF) and README link | open |
-| J3 | `CITATION.cff` author list to confirm | open |
+| J3 | `CITATION.cff` authors: Fraser, Neal (ORCID 0009-0003-0307-059X), Azizi (ORCID 0009-0003-1472-8684), set 2026-11-22; Fraser ORCID not yet added | current |
 | J4 | Trim `docs/AnalysisPipeline.md` for a public audience (it refers to internal notes) | open |
 | J5 | Square spatial jump: 649 points (125 mm at 5.209) with no time gap, noted 2026-07-16, never investigated. The finger/palm fix (B3) removed 50 to 120 mm jumps of the same kind, so it may already be explained; check on the current run | open |
 | J6 | Scripts not yet in this repository: `exportDataRelease_2026.m`, and the SEM/tempo set (`estimateTempoF0.m`, `extractTrialTempo_2026.m`, `semFromVisitMatrix_2026.m`, `reportSEMReliability_2026.m`, `test_semFromVisitMatrix_2026.m`, `docs/SEM_Tempo_Reliability_N48.md`) | open |

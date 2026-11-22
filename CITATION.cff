@@ -5,6 +5,14 @@ authors:
   - family-names: Fraser
     given-names: Dagmar S.
     affiliation: University of Birmingham
+  - family-names: Neal
+    given-names: Harvey
+    affiliation: University of Birmingham
+    orcid: "https://orcid.org/0009-0003-0307-059X"
+  - family-names: Azizi
+    given-names: Sahar
+    affiliation: University of Birmingham
+    orcid: "https://orcid.org/0009-0003-1472-8684"
 license: MIT
 repository-code: "https://github.com/dagmarfraser/power-law-test-retest"
 references:
