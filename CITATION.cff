@@ -1,23 +1,22 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite it and the methods paper below."
+message: "If you use this code, please cite it."
 title: "power-law-test-retest: test-retest reliability of the speed-curvature power law on iPad drawing"
 authors:
   - family-names: Fraser
-    given-names: Dagmar S.
+    given-names: Dagmar Scott
     affiliation: University of Birmingham
+    orcid: "https://orcid.org/0000-0002-9241-7772"
+  - family-names: Azizi
+    given-names: Sahar
+    affiliation: University of Birmingham
+    orcid: "https://orcid.org/0009-0003-1472-8684"
+  - family-names: Neal
+    given-names: Harvey
+    affiliation: University of Birmingham
+    orcid: "https://orcid.org/0009-0003-0307-059X"
+  - family-names: Cook
+    given-names: Jennifer Louise
+    affiliation: University of Birmingham
+    orcid: "https://orcid.org/0000-0003-4916-8667"
 license: MIT
 repository-code: "https://github.com/dagmarfraser/power-law-test-retest"
-references:
-  - type: article
-    title: "Fraser, Di Luca & Cook (2025): pipeline methodology and SG+IRLS rationale"
-    authors:
-      - family-names: Fraser
-        given-names: Dagmar S.
-      - family-names: Di Luca
-        given-names: Massimiliano
-      - family-names: Cook
-        given-names: Jennifer
-    journal: "Experimental Brain Research"
-    volume: 243
-    start: 107
-    year: 2025

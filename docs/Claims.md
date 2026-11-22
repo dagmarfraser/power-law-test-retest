@@ -17,9 +17,9 @@ Shape codes: 1 phi=0.4, 2 phi=0.8, 3 Ellipse, 4 Square, 5 Cursive.
 | A1 | Participants recruited / complete | 51 took part, 48 complete (45 originals + replacements 401, 402, 403); 101, 102, 214 excluded as non-completers | `preflightN48_2026` inventory | 2026-11-09 | current |
 | A2 | Stopping rule | Replace non-completers only; 48 final whatever the results; a replacement who drops out is not replaced; set before any replacement data existed | Sample rule, `docs/SensitivityPlan_N48.md` | 2026-10-12 | current |
 | A3 | Trials in final run | 14,388 trials; Beta_SG6_IRLS 0.190 +/- 0.105; 0.26% NaN; 240 Hz throughout | `keyNumbers_20261109_120558.txt` | 2026-11-09 | current |
-| A4 | Ellipse trials | 2,879 | `trial_level_results_20261109_112129` | 2026-11-15 | current (companion simulation paper should reconcile its 2,829 / 2,877 against this) |
+| A4 | Ellipse trials (reconciled) | **2,879 analysed** (2,873 with a finite SG6_IRLS beta). 2,880 scheduled (48 x 2 visits x 3 sessions x 10); 1 has no samples in the raw file (ID305, visit 1, trial 21), so 2,879 were recorded. The companion simulation paper's importer (`importDB_fraser_v002`) keeps 2,877: it also rejects 2 trials whose recorded clock drifts 12.3 and 12.5 ms from a uniform 240 Hz clock (ID202 and ID204, limit 10 ms); both are in this run with finite beta. Its older corpus of 2,829 is 45 complete participants x 60 - 1 plus 130 trials from non-completers 101, 102, 214 (before 401 to 403 existed). Every trial's status is in the `_trials.csv` | `ellipseCountReconciliation_20261122_082713_summary.csv` / `_trials.csv` (`reconcileEllipseCounts_2026`) | 2026-11-22 | current |
 | A5 | Retest interval | Median 8.0 d (IQR 7.0 to 13.1, range 6.0 to 43.2); 11 of 48 over 14 d, 2 over 28 d (IDs 203, 204) | `retestInterval_N48_20261109_161028.csv` | 2026-11-09 | current |
-| A6 | Framing of N | N=48 was set by the students' preregistered Pearson design, not an ICC target, so ICCs are estimation and Zou N is planning information. N=48 primary, N=45 (originals) supplementary | Decision | 2026-11-01 | current |
+| A6 | Framing of N | N=48 was set by the students' preregistered Pearson design, not an ICC target, so ICCs are estimation and Zou N is planning information. N=48 primary, N=45 (originals) supplementary | Decision | 2026-11-01 | **open**: neither student pre-registration draft seen so far states N=48; keep flagged until the registered records are checked (J14) |
 
 ## B. Data handling (fixes that changed earlier numbers)
 
@@ -31,6 +31,7 @@ Shape codes: 1 phi=0.4, 2 phi=0.8, 3 Ellipse, 4 Square, 5 Cursive.
 | B4 | Touch fix effect on beta | Beta ICCs unchanged (SG6_IRLS change <= 0.0005, no class change in any beta pipeline); 13,462 clean trials identical to the 3 Nov run | `touchFixRunCheck_ICC_20261109_113047.csv` | 2026-11-09 | current |
 | B5 | Touch fix effect on peak kinematics | Peak velocity, acceleration and jerk ICCs rise on templated shapes and fall on Cursive; class changes: PeakVelocity_SG phi=0.8 moderate to good, Cursive poor to moderate | same | 2026-11-09 | current (supersedes all pre-fix peak-kinematic ICCs, S3) |
 | B6 | Pen-lift timing | Cursive time base taken from `time_seconds` residual (`detectPenLifts.m`); templated shapes unchanged | `docs/AnalysisPipeline.md`, "Pen lifts in Cursive" | 2026-07-16 | current (any Cursive kinematics before this date are stale) |
+| B7 | Two import rule sets exist for the same raw files | This run (`runAnalysis_2026`): Pencil samples only (`touch_type == 2`), 50-sample edge clip, uniform clock t = touch_index/240, pen lifts where the clock residual steps by more than 12.5 ms, each stroke differentiated separately and all strokes pooled in one regression, no clock-drift rejection, all five shapes. Companion importer (`importDB_fraser_v002`, Ellipse only): Pencil only, 50-sample edge clip, split at `time_seconds` gaps over 20 ms and keep the longest piece, reject clock drift over 10 ms, uniform 240 Hz clock. The paper must cite the rules that produced its numbers (this run's) | `runAnalysis_2026.m`, `detectPenLifts.m`, `calculatePowerLaw.m`; `importDB_fraser_v002.m` header | 2026-11-22 | current (which set the paper cites: J11) |
 
 ## C. Primary result: between-visit reliability of beta (N=48)
 
@@ -87,6 +88,7 @@ From `semReliability_N48_20261115_205624.csv` (`reportSEMReliability_2026`, `ext
 | G4 | Ellipse spread is largely tempo | Tempo-adjusted Ellipse ICC 0.79 to 0.51 (between-person SD 0.065 to 0.026); phi=0.8 0.88 to 0.76; phi=0.4 and Square barely change | 2026-11-15 | current (descriptive, not pre-registered) |
 | G5 | phi=0.8 shift is about a third tempo | +0.017 to +0.012 [-0.000, 0.024] after adjustment; r(delta beta, delta log tempo) 0.54 | 2026-11-15 | current |
 | G6 | Tempo frequency of templated shapes | Median speed spectrum F50 0.94 Hz (check a possible ~1 Hz threshold) | `docs/AnalysisPipeline.md` | 2026-07 | open |
+| G7 | MDC95 against 0.03 and against the 0.0108 SEM limit | 0.0108 = 0.03/2.77 is an SEM limit, so compare SEM with 0.0108 and MDC95 with 0.03; the two ratios are the same (MDC95 = 2.772 x SEM). SEM_A / 0.0108 [CI]: phi=0.4 4.3 [3.3, 5.3]; phi=0.8 3.4 [2.3, 4.5]; Ellipse 3.1 [2.3, 3.9]; Square 0.88 [0.65, 1.16]; Cursive 2.3 [0.97, 3.5]. No shape meets either limit on its CI upper bound; Square meets both on the point estimate only. MDC95 / 0.0108 (8.6x for Ellipse) mixes an MDC with an SEM limit and should not be reported. The companion limit is a within-occasion pipeline repeatability; this SEM is between visits days apart, so it also contains day-to-day change | `mdcThresholdComparison_20261122_082835.csv` (`compareMDCThresholds_2026`) | 2026-11-22 | current |
 
 ## H. Robustness and sensitivity
 
@@ -106,9 +108,38 @@ From `semReliability_N48_20261115_205624.csv` (`reportSEMReliability_2026`, `ext
 | ID | Claim | Value | Source | Date | Status |
 |---|---|---|---|---|---|
 | I1 | CATI_Total and M-EDL vs beta and jerk | 1 of 20 Spearman CIs excludes 0, only just (M-EDL vs Cursive beta -0.27 [-0.52, -0.00]); about 1 expected by chance. CATI about 0 throughout; M-EDL vs beta consistently negative (-0.10 to -0.28) | `exploratory_traitKinematics_N48_20261109_113543.csv` | 2026-11-09 | current, exploratory |
-| I2 | CATI subscale labels | Assumed published English et al. 2021 order; `LABELS_VERIFIED = false` | `mergeQuestionnaires_2026` | 2026-10-08 | **open** (needs the students' confirmation) |
+| I2 | CATI subscale labels | Assumed published English et al. 2021 order; `LABELS_VERIFIED = false`. 2026-11-22: Harvey Neal's sheet (`data/CATI and M-EDL scores anonymised_fullScores.xlsx`, values identical) labels the columns in the same order as Social Interactions, Communication, Social Camouflage, Self-Regulatory Behaviours, Cognitive Inflexibility, Sensory Sensitivity | `mergeQuestionnaires_2026` | 2026-10-08 | **open** (ask Harvey whether the headers came from the scoring sheet) |
 | I3 | M-EDL zeros | 18 of 48 exact zeros (401 and 402 added two), meaning unknown | questionnaire sheet | 2026-11-03 | **open** |
-| I4 | CATI to beta to jerk mediation | Not pursued: a-path about 0 | same | 2026-10-08 | current |
+| I4 | Registered mediation CATI_Total -> beta -> jerk (run 2026-11-22) | Indirect effect null in every shape (bootstrap CIs span 0, Holm p = 1); a-path 0.04 to 0.06 (phi=0.4, phi=0.8, Ellipse), Square 0.08, Cursive -0.09, all CIs spanning 0; the beta-jerk b-path is large on templated shapes (0.57 to 0.75) because both come from the same kinematics, not a trait effect. Agrees with I1 | `src/R/mediation_N48.R` | 2026-11-22 | current, registered (CATI subscale labels unverified, I2) |
+| I5 | Registered repeated-measures ANCOVA on beta, Shape x Visit with CATI_Total as covariate (run 2026-11-22) | No CATI effect (CATI p = .74, CATI x Shape p = .94, CATI x Visit p = .52). Shape x Visit p = .059 with 5 shapes, .087 with the 4 templated shapes as registered; only phi=0.8 shifts between visits (+0.017, Holm p = .049, as F4). Normality imperfect (Shapiro-Wilk p < .05 in 7 of 10 cells, residual excess kurtosis 2.2), but the registered skew-based transformation rule did not trigger | `src/R/regAncova_N48.R` | 2026-11-22 | current, registered |
+
+## K. Variance decomposition of trial-level beta (N=48, supplementary)
+
+Model per shape: `Beta_SG6_IRLS ~ Visit + (1|ParticipantID) + (1|ParticipantID:Visit) + (1|ParticipantID:Session)` on all trials (Harvey Neal's model, adapted in `src/R`). Decided 2026-11-22: supplementary table, ICC(A,1) (section C) stays primary.
+
+| ID | Claim | Value | Source | Date | Status |
+|---|---|---|---|---|---|
+| K1 | Variance shares, brms median [90% CrI]: person / person x visit / person x session / trial | phi=0.4 0.70 [0.61, 0.79] / 0.10 / 0.05 / 0.14; phi=0.8 0.75 [0.67, 0.82] / 0.07 / 0.05 / 0.13; Ellipse 0.62 [0.51, 0.72] / 0.13 / 0.07 / 0.17; Square 0.58 [0.49, 0.68] / 0.06 / 0.06 / 0.30; Cursive 0.20 [0.07, 0.33] / 0.30 [0.21, 0.44] / 0.06 / 0.42. All fits max Rhat <= 1.005, min bulk ESS >= 1,054, 0 divergences (Square and Cursive needed iter 6000, max_treedepth 12). Shares are for a single trial; a visit mean averages about 30 trials, so trial noise shrinks (Square's 58% person share still gives visit-mean reliability 0.87, K2) | `varianceSupplement_N48_20261122_114442/varianceSupplementTable_N48.csv` (from `mixedModel_N48_20261122_090238`, `bayesMixedModel_N48_20261122_090425` and `_095529`) | 2026-11-22 | current |
+| K2 | Decomposition reproduces the ICCs | Implied reliability of a visit mean (lmer, REML; person / (person + PxV + PxS/3 + trial/n)) 0.849 / 0.889 / 0.788 / 0.867 / 0.384 equals the between-visit consistency ICC(3,1) from `runICC_2026` (0.849 / 0.889 / 0.788 / 0.866 / 0.384, max difference 0.0005); also reproduced in MATLAB `fitlme`. Like ICC(3,1) it ignores the mean visit shift, so it sits 0.011 above ICC(A,1) for phi=0.8 (F4) and within 0.005 elsewhere. `runICC_2026` averages trials to session means, then session means to visit means, then computes ICC on the 48 x 2 visit-mean matrix | same; `varianceDecompHarvey_2026.m`; `icc_results_20261109_112131` | 2026-11-22 | current |
+| K3 | Why Cursive is poor and Square is not | Cursive: 30% person x visit (content differs between visits, supports C7). Square: lowest person share of the templated shapes but 30% is trial noise, which averaging over about 30 trials removes | same | 2026-11-22 | current |
+| K4 | CATI as person-level predictor | No CATI main effect or Visit x CATI interaction in any shape (lmer all p > 0.26; brms all 95% CrIs include 0); LOO prefers the main-effects model throughout (Cursive LOO has 1 to 2 Pareto k > 0.7). No participant-level questionnaire correlation reaches p < .05 uncorrected (Pearson or Spearman, mean beta over both visits). Agrees with I1 | `mixedModel_N48_20261122_090238`, `bayesMixedModel_N48_*` | 2026-11-22 | current, exploratory |
+
+## L. Sample-size planning: the pilot power calculation (N=61)
+
+Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alpha = 0.05, tails = 1, power = 0.80)`, with p the between-visit ICC(A,1) of SG+IRLS beta from the analysis_2025 pilot (N=61). The same settings are used for the final run (`icc_power_analysis.R`). The calculation was set as the MSc students' exercise (January 2026). Inputs: `analysis_2025/results/IRLS_ICC_PilotData.csv`; output: `analysis_2025/results/icc_power_output.csv` (both 2026-03-15, not in this repository).
+
+| ID | Shape | Pilot ICC(A,1) [95% CI], N=61 | Required N (pilot) | N=61 enough? | Required N (final run, N=48; C1 to C5) |
+|---|---|---|---|---|---|
+| L1 | phi=0.4 | 0.888 [0.750, 0.943] | 34 | yes | 78 |
+| L2 | phi=0.8 | 0.878 [0.584, 0.949] | 41 | yes | 41 |
+| L3 | Ellipse | 0.858 [0.623, 0.934] | 65 | no (just) | 620 |
+| L4 | Square | 0.785 [0.663, 0.866] | 827 | no | 59 |
+| L5 | Cursive | 0.814 [0.708, 0.884] | 227 | no | none (ICC below p0) |
+
+- **L6** In the pilot, Square and Cursive needed very large N. The final study reverses this for Square (59) and makes Ellipse the hard templated shape (620). Cursive goes from 0.81 to 0.39, consistent with free text differing between visits (C7). Required N moves a lot with small changes in ICC near p0 = 0.75 (C8), so a pilot estimate is a weak guide to the final N. *current*
+- **L7** No pilot-based N was adopted as the study's target: the original aim was N=80, and N=48 came from the MSc students' Pearson-based design (A6), so the final ICCs are estimation and required N is planning information. Cite this Zou analysis, not the students' formative preregistration, for N. *current*
+- **L8** Pilot ICC(3,1) (consistency) for comparison: 0.911 / 0.921 / 0.897 / 0.794 / 0.811 (`IRLS_ICC31_PilotData.csv`). *current, not used for N*
+- **L9** The pilot's hard-coded values in `powerAnalysisICC_2025.m` (e.g. phi=0.8 0.880) differ from its CSV in the third decimal; the Zou N above came from the CSV. *current (minor)*
 
 ## J. Release and repository items (open)
 
@@ -116,13 +147,18 @@ From `semReliability_N48_20261115_205624.csv` (`reportSEMReliability_2026`, `ext
 |---|---|---|
 | J1 | Data release staged (current run only, session times as day offsets, MD5 manifest) but NOT published; blocked on consent wording, CATI subscale order (I2) and M-EDL zeros (I3) | open |
 | J2 | Data DOI (Zenodo or OSF) and README link | open |
-| J3 | `CITATION.cff` author list to confirm | open |
+| J3 | `CITATION.cff` authors: Fraser (first), Azizi, Neal (middle two alphabetical for now), Cook (last), set 2026-11-22, all four with ORCID | current |
 | J4 | Trim `docs/AnalysisPipeline.md` for a public audience (it refers to internal notes) | open |
 | J5 | Square spatial jump: 649 points (125 mm at 5.209) with no time gap, noted 2026-07-16, never investigated. The finger/palm fix (B3) removed 50 to 120 mm jumps of the same kind, so it may already be explained; check on the current run | open |
-| J6 | Scripts not yet in this repository: `exportDataRelease_2026.m`, and the SEM/tempo set (`estimateTempoF0.m`, `extractTrialTempo_2026.m`, `semFromVisitMatrix_2026.m`, `reportSEMReliability_2026.m`, `test_semFromVisitMatrix_2026.m`, `docs/SEM_Tempo_Reliability_N48.md`) | open |
+| J6 | Scripts not yet in this repository: `exportDataRelease_2026.m`, and the SEM/tempo set (`estimateTempoF0.m`, `extractTrialTempo_2026.m`, `semFromVisitMatrix_2026.m`, `reportSEMReliability_2026.m`, `test_semFromVisitMatrix_2026.m`, `docs/SEM_Tempo_Reliability_N48.md`), and `reconcileEllipseCounts_2026.m`, `compareMDCThresholds_2026.m`, `varianceDecompHarvey_2026.m` (2026-11-22) | open |
 | J7 | Trial count off by one: the touch-fix diagnostic counts 14,389 trials and 13,463 clean, the final run 14,388 and 13,462 | open (minor) |
 | J8 | Whether the iPad app logs `location(in:)` or `preciseLocation(in:)` (all x,y on whole or half points) | open |
 | J9 | Pre-specification wording: "designated primary from the pilot and the 2025 protocol paper", not "preregistered", unless a timestamped registration is found | open |
+| J10 | The companion repository's `data/fraser/README.md` still says "48 recruited, 45 usable (3 excluded for missing sessions), ~2,830 ellipse trials". Current: 51 took part, 48 complete, 2,879 Ellipse trials analysed here (A1, A4) | open (fix in that repository) |
+| J11 | Which import rules the paper cites (B7): this run's rules (`runAnalysis_2026`); the companion importer's 2,877 is reported as a stricter Ellipse-only variant | decided 2026-11-22 (Dagmar) |
+| J12 | B6 says templated shapes are single strokes, but the companion importer audit (3 Nov) found 51 Ellipse trials with `time_seconds` gaps over 20 ms. Count Ellipse trials with more than one stroke in this run | open |
+| J13 | R scripts `src/R/*.R` (mixed and Bayesian models, supplementary table) and the `.gitignore` entry for `HarveyR/` added to this repository 2026-11-22. They need R with lme4, brms and readxl, the handover CSV and the full-scores sheet, none of which are in the repository | current |
+| J14 | Student pre-registrations: a crosswalk of registered hypotheses against what was run is kept internally (registration content is not quoted here until dates, embargo status and permission are settled). The registered ANCOVA, mediation and normality checks were run 2026-11-22 (I4, I5). Open: whether CATI and M-EDL were repeated at visit 2 is unclear (one score per participant is held); and the source of N=48 (A6) | open |
 
 ## Superseded claims
 
@@ -138,6 +174,8 @@ From `semReliability_N48_20261115_205624.csv` (`reportSEMReliability_2026`, `ext
 | S8 | "48 recruited, 45 complete" flow | A1 | 51 took part including 3 replacements |
 | S9 | `cohort*_N45vsN48_20261109_120548` and comparisons against the frozen baseline (`*_20261103_151028`, `*_20261109_112137`) | H4 (`_160648`) | Same numbers without local paths; frozen-baseline comparisons mixed cohort with fixes |
 | S10 | "runAnalysis_2026 and runICC_2026 call writetable unguarded" | `writeTableVerified.m` (PR #2) | Fixed 2026-11-09 |
+| S11 | Ellipse trial count "2,829" (companion corpus) and "2,877" (companion draft) quoted as the study's count | A4 | Different cohort (2,829) and a stricter importer (2,877); the study's count is 2,879 |
+| S12 | Ellipse Bayesian pilot (10 Nov): variance shares 61% person [90% interval 50, 71] / 14% person x visit / 7% person x session / 18% trial; default priors, Stan sampling warnings, labelled a demonstration | K1 | Final brms run converged (0.62 / 0.13 / 0.07 / 0.17); same shares |
 
 ## Conflicts found when this register was built
 

@@ -1,6 +1,6 @@
 # power-law-test-retest
 
-MATLAB code for a test-retest reliability study of the speed-curvature power law (the exponent beta, Lacquaniti et al. 1983) measured from Apple Pencil drawing on an iPad. It takes the raw session files from the iPad app to trial-level beta and kinematics, between-visit reliability (ICC), and the sensitivity, stability and robustness analyses reported in the paper.
+MATLAB code (with supplementary R models) for a test-retest reliability study of the speed-curvature power law (the exponent beta, Lacquaniti et al. 1983) measured from Apple Pencil drawing on an iPad. It takes the raw session files from the iPad app to trial-level beta and kinematics, between-visit reliability (ICC), and the sensitivity, stability and robustness analyses reported in the paper.
 
 The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The functions `differentiateKinematicsEBR.m`, `regressDataEBR.m` and `curvatureKinematicEBR.m` come from that paper's protocol and are used unchanged.
 
@@ -20,19 +20,20 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
   - Raw x,y are UIKit points at 5.209 per mm (`ipadPointsPerMm.m`).
   - Only Apple Pencil samples are kept (`touch_type == 2`, `pencilSamplesOnly.m`).
   - Pen lifts are found from the timestamp residual (`detectPenLifts.m`).
-  - The boundary samples of the SG filter are discarded.
+  - The first and last 50 samples of each trial are clipped, and the SG boundary samples at each pen lift are masked, so nothing is differentiated across a lift.
 - **Sensitivity analysis:** the original 45 completers are compared with the final 48, both on the same pipeline. The pre-specified plan is in `docs/SensitivityPlan_N48.md`.
 
 ## Requirements
 
 - MATLAB (developed on R2025a/b), with the Signal Processing Toolbox and the Statistics and Machine Learning Toolbox. The Parallel Computing Toolbox is optional and is used for the per-participant loop.
-- R, with `ICC.Sample.Size`, for the Zou sample-size step only. `test_computeICC_matchesR` also needs `psych` and `irr`.
+- R, with `ICC.Sample.Size`, for the Zou sample-size step, and with `lme4`, `lmerTest`, `brms`, `emmeans`, `lavaan`, `dplyr`, `tidyr`, `ggplot2` and `readxl` for the supplementary and registered analyses in `src/R` (brms uses `cmdstanr` if CmdStan is installed, otherwise `rstan`). `test_computeICC_matchesR` also needs `psych` and `irr`.
 - Python 3, standard library only, for the optional email-ingestion scripts.
 
 ## Layout
 
 ```
 src/functions/   analysis code (MATLAB), Zou step (R + shell), email ingestion (Python)
+src/R/           supplementary variance decomposition (lme4, brms) and the registered ANCOVA and mediation
 tests/           matlab.unittest tests; old_*.m are legacy ICC references used by one test
 docs/            Claims.md (register of current claims), AnalysisPipeline.md (methods and decision log), SensitivityPlan_N48.md, DesignNotes.md
 data/            not in the repository (see Data)
@@ -51,6 +52,16 @@ summariseKeyNumbers_2026()          % the headline numbers, written to data/proc
 ```
 
 All outputs are timestamped files in `data/processed/` and `figures/`. Every number quoted in the docs comes from one of these scripts, not from console work.
+
+The supplementary variance decomposition (R) reads the SG6+IRLS handover CSV from `handover/` and the questionnaire full-scores sheet from `data/`, neither of which is in the repository, and writes to `reports/R/<timestamp>/`:
+
+```
+Rscript src/R/mixedModel_N48.R                 # lme4 / lmerTest
+Rscript src/R/bayesMixedModel_N48.R            # brms; default the 4 templated shapes, or name shapes
+Rscript src/R/varianceSupplementTable_N48.R <lmerRunDir> <shape>=<bayesRunDir> ...
+Rscript src/R/regAncova_N48.R                  # registered repeated-measures ANCOVA (mixed-model form)
+Rscript src/R/mediation_N48.R                  # registered mediation CATI -> beta -> jerk (lavaan)
+```
 
 Tests: `runtests('tests')`. Run them with warnings enabled, because some tests check for warnings. The R cross-validation tests are skipped if `Rscript` is not found.
 
