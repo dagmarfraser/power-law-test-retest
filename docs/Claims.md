@@ -19,7 +19,7 @@ Shape codes: 1 phi=0.4, 2 phi=0.8, 3 Ellipse, 4 Square, 5 Cursive.
 | A3 | Trials in final run | 14,388 trials; Beta_SG6_IRLS 0.190 +/- 0.105; 0.26% NaN; 240 Hz throughout | `keyNumbers_20261109_120558.txt` | 2026-11-09 | current |
 | A4 | Ellipse trials (reconciled) | **2,879 analysed** (2,873 with a finite SG6_IRLS beta). 2,880 scheduled (48 x 2 visits x 3 sessions x 10); 1 has no samples in the raw file (ID305, visit 1, trial 21), so 2,879 were recorded. The companion simulation paper's importer (`importDB_fraser_v002`) keeps 2,877: it also rejects 2 trials whose recorded clock drifts 12.3 and 12.5 ms from a uniform 240 Hz clock (ID202 and ID204, limit 10 ms); both are in this run with finite beta. Its older corpus of 2,829 is 45 complete participants x 60 - 1 plus 130 trials from non-completers 101, 102, 214 (before 401 to 403 existed). Every trial's status is in the `_trials.csv` | `ellipseCountReconciliation_20261122_082713_summary.csv` / `_trials.csv` (`reconcileEllipseCounts_2026`) | 2026-11-22 | current |
 | A5 | Retest interval | Median 8.0 d (IQR 7.0 to 13.1, range 6.0 to 43.2); 11 of 48 over 14 d, 2 over 28 d (IDs 203, 204) | `retestInterval_N48_20261109_161028.csv` | 2026-11-09 | current |
-| A6 | Framing of N | N=48 was set by the students' preregistered Pearson design, not an ICC target, so ICCs are estimation and Zou N is planning information. N=48 primary, N=45 (originals) supplementary | Decision | 2026-11-01 | current |
+| A6 | Framing of N | N=48 was set by the students' preregistered Pearson design, not an ICC target, so ICCs are estimation and Zou N is planning information. N=48 primary, N=45 (originals) supplementary | Decision | 2026-11-01 | **open**: neither student pre-registration draft seen so far states N=48; keep flagged until the registered records are checked (J14) |
 
 ## B. Data handling (fixes that changed earlier numbers)
 
@@ -157,6 +157,7 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | J11 | Which import rules the paper cites (B7): this run's rules (`runAnalysis_2026`); the companion importer's 2,877 is reported as a stricter Ellipse-only variant | decided 2026-11-22 (Dagmar) |
 | J12 | B6 says templated shapes are single strokes, but the companion importer audit (3 Nov) found 51 Ellipse trials with `time_seconds` gaps over 20 ms. Count Ellipse trials with more than one stroke in this run | open |
 | J13 | R scripts `src/R/*.R` (mixed and Bayesian models, supplementary table) and the `.gitignore` entry for `HarveyR/` added to this repository 2026-11-22. They need R with lme4, brms and readxl, the handover CSV and the full-scores sheet, none of which are in the repository | current |
+| J14 | Student pre-registrations: a crosswalk of registered hypotheses against what was run is kept internally (registration content is not quoted here until dates, embargo status and permission are settled). Open: registered analyses not yet run or declared dropped, and the source of N=48 (A6) | open |
 
 ## Superseded claims
 
