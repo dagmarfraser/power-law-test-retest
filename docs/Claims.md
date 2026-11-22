@@ -158,7 +158,6 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | J11 | Which import rules the paper cites (B7): this run's rules (`runAnalysis_2026`); the companion importer's 2,877 is reported as a stricter Ellipse-only variant | decided 2026-11-22 (Dagmar) |
 | J12 | B6 says templated shapes are single strokes, but the companion importer audit (3 Nov) found 51 Ellipse trials with `time_seconds` gaps over 20 ms. Count Ellipse trials with more than one stroke in this run | open |
 | J13 | R scripts `src/R/*.R` (mixed and Bayesian models, supplementary table) and the `.gitignore` entry for `HarveyR/` added to this repository 2026-11-22. They need R with lme4, brms and readxl, the handover CSV and the full-scores sheet, none of which are in the repository | current |
-| J15 | `src/R/regAncova_N48.R` and `src/R/mediation_N48.R` (I4, I5) are on the M5 but not yet in this repository | open |
 | J14 | Student pre-registrations: a crosswalk of registered hypotheses against what was run is kept internally (registration content is not quoted here until dates, embargo status and permission are settled). The registered ANCOVA, mediation and normality checks were run 2026-11-22 (I4, I5). Open: whether CATI and M-EDL were repeated at visit 2 is unclear (one score per participant is held); and the source of N=48 (A6) | open |
 
 ## Superseded claims

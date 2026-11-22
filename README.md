@@ -26,14 +26,14 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
 ## Requirements
 
 - MATLAB (developed on R2025a/b), with the Signal Processing Toolbox and the Statistics and Machine Learning Toolbox. The Parallel Computing Toolbox is optional and is used for the per-participant loop.
-- R, with `ICC.Sample.Size`, for the Zou sample-size step, and with `lme4`, `lmerTest`, `brms`, `dplyr`, `tidyr`, `ggplot2` and `readxl` for the supplementary mixed models in `src/R` (brms uses `cmdstanr` if CmdStan is installed, otherwise `rstan`). `test_computeICC_matchesR` also needs `psych` and `irr`.
+- R, with `ICC.Sample.Size`, for the Zou sample-size step, and with `lme4`, `lmerTest`, `brms`, `emmeans`, `lavaan`, `dplyr`, `tidyr`, `ggplot2` and `readxl` for the supplementary and registered analyses in `src/R` (brms uses `cmdstanr` if CmdStan is installed, otherwise `rstan`). `test_computeICC_matchesR` also needs `psych` and `irr`.
 - Python 3, standard library only, for the optional email-ingestion scripts.
 
 ## Layout
 
 ```
 src/functions/   analysis code (MATLAB), Zou step (R + shell), email ingestion (Python)
-src/R/           supplementary variance decomposition (lme4 and brms mixed models)
+src/R/           supplementary variance decomposition (lme4, brms) and the registered ANCOVA and mediation
 tests/           matlab.unittest tests; old_*.m are legacy ICC references used by one test
 docs/            Claims.md (register of current claims), AnalysisPipeline.md (methods and decision log), SensitivityPlan_N48.md, DesignNotes.md
 data/            not in the repository (see Data)
@@ -59,6 +59,8 @@ The supplementary variance decomposition (R) reads the SG6+IRLS handover CSV fro
 Rscript src/R/mixedModel_N48.R                 # lme4 / lmerTest
 Rscript src/R/bayesMixedModel_N48.R            # brms; default the 4 templated shapes, or name shapes
 Rscript src/R/varianceSupplementTable_N48.R <lmerRunDir> <shape>=<bayesRunDir> ...
+Rscript src/R/regAncova_N48.R                  # registered repeated-measures ANCOVA (mixed-model form)
+Rscript src/R/mediation_N48.R                  # registered mediation CATI -> beta -> jerk (lavaan)
 ```
 
 Tests: `runtests('tests')`. Run them with warnings enabled, because some tests check for warnings. The R cross-validation tests are skipped if `Rscript` is not found.
