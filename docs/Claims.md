@@ -174,6 +174,7 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | S9 | `cohort*_N45vsN48_20261109_120548` and comparisons against the frozen baseline (`*_20261103_151028`, `*_20261109_112137`) | H4 (`_160648`) | Same numbers without local paths; frozen-baseline comparisons mixed cohort with fixes |
 | S10 | "runAnalysis_2026 and runICC_2026 call writetable unguarded" | `writeTableVerified.m` (PR #2) | Fixed 2026-11-09 |
 | S11 | Ellipse trial count "2,829" (companion corpus) and "2,877" (companion draft) quoted as the study's count | A4 | Different cohort (2,829) and a stricter importer (2,877); the study's count is 2,879 |
+| S12 | Ellipse Bayesian pilot (10 Nov): variance shares 61% person [90% interval 50, 71] / 14% person x visit / 7% person x session / 18% trial; default priors, Stan sampling warnings, labelled a demonstration | K1 | Final brms run converged (0.62 / 0.13 / 0.07 / 0.17); same shares |
 
 ## Conflicts found when this register was built
 
