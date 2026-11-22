@@ -3,8 +3,9 @@ message: "If you use this code, please cite it."
 title: "power-law-test-retest: test-retest reliability of the speed-curvature power law on iPad drawing"
 authors:
   - family-names: Fraser
-    given-names: Dagmar S.
+    given-names: Dagmar Scott
     affiliation: University of Birmingham
+    orcid: "https://orcid.org/0000-0002-9241-7772"
   - family-names: Azizi
     given-names: Sahar
     affiliation: University of Birmingham
