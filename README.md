@@ -26,13 +26,14 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
 ## Requirements
 
 - MATLAB (developed on R2025a/b), with the Signal Processing Toolbox and the Statistics and Machine Learning Toolbox. The Parallel Computing Toolbox is optional and is used for the per-participant loop.
-- R, with `ICC.Sample.Size`, for the Zou sample-size step only. `test_computeICC_matchesR` also needs `psych` and `irr`.
+- R, with `ICC.Sample.Size`, for the Zou sample-size step, and with `lme4`, `brms` and `readxl` for the supplementary mixed models in `src/R`. `test_computeICC_matchesR` also needs `psych` and `irr`.
 - Python 3, standard library only, for the optional email-ingestion scripts.
 
 ## Layout
 
 ```
 src/functions/   analysis code (MATLAB), Zou step (R + shell), email ingestion (Python)
+src/R/           supplementary variance decomposition (lme4 and brms mixed models)
 tests/           matlab.unittest tests; old_*.m are legacy ICC references used by one test
 docs/            Claims.md (register of current claims), AnalysisPipeline.md (methods and decision log), SensitivityPlan_N48.md, DesignNotes.md
 data/            not in the repository (see Data)
