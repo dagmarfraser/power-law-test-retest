@@ -34,7 +34,7 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
 ```
 src/functions/   analysis code (MATLAB), Zou step (R + shell), email ingestion (Python)
 tests/           matlab.unittest tests; old_*.m are legacy ICC references used by one test
-docs/            AnalysisPipeline.md (methods and decision log), SensitivityPlan_N48.md, DesignNotes.md
+docs/            Claims.md (register of current claims), AnalysisPipeline.md (methods and decision log), SensitivityPlan_N48.md, DesignNotes.md
 data/            not in the repository (see Data)
 ```
 
