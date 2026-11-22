@@ -123,6 +123,23 @@ Model per shape: `Beta_SG6_IRLS ~ Visit + (1|ParticipantID) + (1|ParticipantID:V
 | K3 | Why Cursive is poor and Square is not | Cursive: 30% person x visit (content differs between visits, supports C7). Square: lowest person share of the templated shapes but 30% is trial noise, which averaging over about 30 trials removes | same | 2026-11-22 | current |
 | K4 | CATI as person-level predictor | No CATI main effect or Visit x CATI interaction in any shape (lmer all p > 0.26; brms all 95% CrIs include 0); LOO prefers the main-effects model throughout (Cursive LOO has 1 to 2 Pareto k > 0.7). No participant-level questionnaire correlation reaches p < .05 uncorrected (Pearson or Spearman, mean beta over both visits). Agrees with I1 | `mixedModel_N48_20261122_090238`, `bayesMixedModel_N48_*` | 2026-11-22 | current, exploratory |
 
+## L. Sample-size planning: the pilot power calculation (N=61)
+
+Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alpha = 0.05, tails = 1, power = 0.80)`, with p the between-visit ICC(A,1) of SG+IRLS beta from the analysis_2025 pilot (N=61). The same settings are used for the final run (`icc_power_analysis.R`). The calculation was set as the MSc students' exercise (January 2026). Inputs: `analysis_2025/results/IRLS_ICC_PilotData.csv`; output: `analysis_2025/results/icc_power_output.csv` (both 2026-03-15, not in this repository).
+
+| ID | Shape | Pilot ICC(A,1) [95% CI], N=61 | Required N (pilot) | N=61 enough? | Required N (final run, N=48; C1 to C5) |
+|---|---|---|---|---|---|
+| L1 | phi=0.4 | 0.888 [0.750, 0.943] | 34 | yes | 78 |
+| L2 | phi=0.8 | 0.878 [0.584, 0.949] | 41 | yes | 41 |
+| L3 | Ellipse | 0.858 [0.623, 0.934] | 65 | no (just) | 620 |
+| L4 | Square | 0.785 [0.663, 0.866] | 827 | no | 59 |
+| L5 | Cursive | 0.814 [0.708, 0.884] | 227 | no | none (ICC below p0) |
+
+- **L6** In the pilot, Square and Cursive needed very large N. The final study reverses this for Square (59) and makes Ellipse the hard templated shape (620). Cursive goes from 0.81 to 0.39, consistent with free text differing between visits (C7). Required N moves a lot with small changes in ICC near p0 = 0.75 (C8), so a pilot estimate is a weak guide to the final N. *current*
+- **L7** No pilot-based N was adopted as the study's target: the original aim was N=80, and N=48 came from the MSc students' Pearson-based design (A6), so the final ICCs are estimation and required N is planning information. Cite this Zou analysis, not the students' formative preregistration, for N. *current*
+- **L8** Pilot ICC(3,1) (consistency) for comparison: 0.911 / 0.921 / 0.897 / 0.794 / 0.811 (`IRLS_ICC31_PilotData.csv`). *current, not used for N*
+- **L9** The pilot's hard-coded values in `powerAnalysisICC_2025.m` (e.g. phi=0.8 0.880) differ from its CSV in the third decimal; the Zou N above came from the CSV. *current (minor)*
+
 ## J. Release and repository items (open)
 
 | ID | Item | Status |
