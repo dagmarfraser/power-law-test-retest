@@ -17,6 +17,7 @@ docs/archive/
 # Stray and generated files
 email.html
 *.docx
+*.pdf
 *.xlsx
 *.eml
 *.mat
