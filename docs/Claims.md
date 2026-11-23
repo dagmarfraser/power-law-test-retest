@@ -19,7 +19,7 @@ Shape codes: 1 phi=0.4, 2 phi=0.8, 3 Ellipse, 4 Square, 5 Cursive.
 | A3 | Trials in final run | 14,388 trials; Beta_SG6_IRLS 0.190 +/- 0.105; 0.26% NaN; 240 Hz throughout | `keyNumbers_20261109_120558.txt` | 2026-11-09 | current |
 | A4 | Ellipse trials (reconciled) | **2,879 analysed** (2,873 with a finite SG6_IRLS beta). 2,880 scheduled (48 x 2 visits x 3 sessions x 10); 1 has no samples in the raw file (ID305, visit 1, trial 21), so 2,879 were recorded. The companion simulation paper's importer (`importDB_fraser_v002`) keeps 2,877: it also rejects 2 trials whose recorded clock drifts 12.3 and 12.5 ms from a uniform 240 Hz clock (ID202 and ID204, limit 10 ms); both are in this run with finite beta. Its older corpus of 2,829 is 45 complete participants x 60 - 1 plus 130 trials from non-completers 101, 102, 214 (before 401 to 403 existed). Every trial's status is in the `_trials.csv` | `ellipseCountReconciliation_20261122_082713_summary.csv` / `_trials.csv` (`reconcileEllipseCounts_2026`) | 2026-11-22 | current |
 | A5 | Retest interval | Median 8.0 d (IQR 7.0 to 13.1, range 6.0 to 43.2); 11 of 48 over 14 d, 2 over 28 d (IDs 203, 204) | `retestInterval_N48_20261109_161028.csv` | 2026-11-09 | current |
-| A6 | Framing of N | N=48 was set by the students' preregistered Pearson design, not an ICC target, so ICCs are estimation and Zou N is planning information. N=48 primary, N=45 (originals) supplementary | Decision | 2026-11-01 | **open**: neither student pre-registration draft seen so far states N=48; keep flagged until the registered records are checked (J14) |
+| A6 | Framing of N | N=48 comes from a student a-priori ANCOVA power calculation (L10), not an ICC target, so ICCs are estimation and Zou N per shape is planning information. N=48 primary, N=45 (originals) supplementary | `src/R/powerCalcN48.R` | 2026-11-23 | current (supersedes the 2026-11-01 "preregistered Pearson design" wording, S13) |
 
 ## B. Data handling (fixes that changed earlier numbers)
 
@@ -137,9 +137,10 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | L5 | Cursive | 0.814 [0.708, 0.884] | 227 | no | none (ICC below p0) |
 
 - **L6** In the pilot, Square and Cursive needed very large N. The final study reverses this for Square (59) and makes Ellipse the hard templated shape (620). Cursive goes from 0.81 to 0.39, consistent with free text differing between visits (C7). Required N moves a lot with small changes in ICC near p0 = 0.75 (C8), so a pilot estimate is a weak guide to the final N. *current*
-- **L7** No pilot-based N was adopted as the study's target: the original aim was N=80, and N=48 came from the MSc students' Pearson-based design (A6), so the final ICCs are estimation and required N is planning information. Cite this Zou analysis, not the students' formative preregistration, for N. *current*
+- **L7** No pilot-based N was adopted as the study's target: the original aim was N=80, and N=48 came from a student a-priori ANCOVA calculation (L10, A6), so the final ICCs are estimation and required N is planning information. Cite this Zou analysis for ICC precision, not the students' formative preregistration. *current*
 - **L8** Pilot ICC(3,1) (consistency) for comparison: 0.911 / 0.921 / 0.897 / 0.794 / 0.811 (`IRLS_ICC31_PilotData.csv`). *current, not used for N*
 - **L9** The pilot's hard-coded values in `powerAnalysisICC_2025.m` (e.g. phi=0.8 0.880) differ from its CSV in the third decimal; the Zou N above came from the CSV. *current (minor)*
+- **L10** N=48 reproduces from a fixed-effects ANCOVA power calculation (G*Power settings): f = 0.5, alpha .05, power .80, 3 numerator df, 2 groups, 1 covariate (achieved power .804); with 20% dropout the recruitment target was 58. f = 0.5 is above Cohen's large effect (0.40); the same design needs N=73 at f = 0.40 and N=179 at f = 0.25. The pilot Zou N in L1 to L5 reproduces exactly; a pilot ICC of about 0.871 would have given N=48. Source `src/R/powerCalcN48.R`, 2026-11-23. *current*
 
 ## J. Release and repository items (open)
 
@@ -158,7 +159,7 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | J11 | Which import rules the paper cites (B7): this run's rules (`runAnalysis_2026`); the companion importer's 2,877 is reported as a stricter Ellipse-only variant | decided 2026-11-22 (Dagmar) |
 | J12 | B6 says templated shapes are single strokes, but the companion importer audit (3 Nov) found 51 Ellipse trials with `time_seconds` gaps over 20 ms. Count Ellipse trials with more than one stroke in this run | open |
 | J13 | R scripts `src/R/*.R` (mixed and Bayesian models, supplementary table) and the `.gitignore` entry for `HarveyR/` added to this repository 2026-11-22. They need R with lme4, brms and readxl, the handover CSV and the full-scores sheet, none of which are in the repository | current |
-| J14 | Student pre-registrations: a crosswalk of registered hypotheses against what was run is kept internally (registration content is not quoted here until dates, embargo status and permission are settled). The registered ANCOVA, mediation and normality checks were run 2026-11-22 (I4, I5). Open: whether CATI and M-EDL were repeated at visit 2 is unclear (one score per participant is held); and the source of N=48 (A6) | open |
+| J14 | Student pre-registrations: a crosswalk of registered hypotheses against what was run is kept internally (registration content is not quoted here until dates, embargo status and permission are settled). The registered ANCOVA, mediation and normality checks were run 2026-11-22 (I4, I5). Open: whether CATI and M-EDL were repeated at visit 2 is unclear (one score per participant is held); whether any registration was made live (the source of N=48 is now resolved, L10) | open |
 
 ## Superseded claims
 
@@ -176,6 +177,7 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | S10 | "runAnalysis_2026 and runICC_2026 call writetable unguarded" | `writeTableVerified.m` (PR #2) | Fixed 2026-11-09 |
 | S11 | Ellipse trial count "2,829" (companion corpus) and "2,877" (companion draft) quoted as the study's count | A4 | Different cohort (2,829) and a stricter importer (2,877); the study's count is 2,879 |
 | S12 | Ellipse Bayesian pilot (10 Nov): variance shares 61% person [90% interval 50, 71] / 14% person x visit / 7% person x session / 18% trial; default priors, Stan sampling warnings, labelled a demonstration | K1 | Final brms run converged (0.62 / 0.13 / 0.07 / 0.17); same shares |
+| S13 | "N=48 was set by the students' preregistered Pearson design" (A6, 2026-11-01) | A6, L10 | No registration draft states 48; it reproduces from a student a-priori ANCOVA calculation (f = 0.5) |
 
 ## Conflicts found when this register was built
 
