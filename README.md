@@ -14,7 +14,7 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
 ## Analysis in brief
 
 - **Primary pipeline:** Savitzky-Golay differentiation (SG6) with IRLS robust regression of log speed on log curvature. Five comparator pipelines ({Butterworth, SG6} x {Linear, LMLS, IRLS}) run alongside it.
-- **Reliability:** ICC(A,1), absolute agreement, on visit means. ICC(3,1) is reported as a secondary measure. Reliability is classified from the 95% CI lower bound (Koo & Li 2016), never from the point estimate. The required N comes from Zou (2012), computed in R with `ICC.Sample.Size`.
+- **Reliability:** ICC(A,1), absolute agreement, on visit means. ICC(3,1) is reported as a secondary measure. Reliability is classified from the 95% CI lower bound (Koo & Li 2016), never from the point estimate. The required N comes from Zou (2012), computed in R with `ICC.Sample.Size`. `src/R/powerCalcN48.R` reproduces the a-priori calculation behind N=48 (ANCOVA, f = 0.5, power .80) and the pilot-based Zou N per shape.
 - **Benchmarks:** mean and peak velocity, acceleration and jerk, all from the same SG path.
 - **Data handling** (see `docs/AnalysisPipeline.md`):
   - Raw x,y are UIKit points at 5.209 per mm (`ipadPointsPerMm.m`).
@@ -33,7 +33,7 @@ The method follows Fraser, Di Luca & Cook (2025), *Exp Brain Res* 243:107. The f
 
 ```
 src/functions/   analysis code (MATLAB), Zou step (R + shell), email ingestion (Python)
-src/R/           supplementary variance decomposition (lme4, brms) and the registered ANCOVA and mediation
+src/R/           supplementary variance decomposition (lme4, brms), the registered ANCOVA and mediation, and the power calculation
 tests/           matlab.unittest tests; old_*.m are legacy ICC references used by one test
 docs/            Claims.md (register of current claims), AnalysisPipeline.md (methods and decision log), SensitivityPlan_N48.md, DesignNotes.md
 data/            not in the repository (see Data)
@@ -61,6 +61,7 @@ Rscript src/R/bayesMixedModel_N48.R            # brms; default the 4 templated s
 Rscript src/R/varianceSupplementTable_N48.R <lmerRunDir> <shape>=<bayesRunDir> ...
 Rscript src/R/regAncova_N48.R                  # registered repeated-measures ANCOVA (mixed-model form)
 Rscript src/R/mediation_N48.R                  # registered mediation CATI -> beta -> jerk (lavaan)
+Rscript src/R/powerCalcN48.R                   # N=48 a-priori power calculation and pilot ICC planning N
 ```
 
 Tests: `runtests('tests')`. Run them with warnings enabled, because some tests check for warnings. The R cross-validation tests are skipped if `Rscript` is not found.
