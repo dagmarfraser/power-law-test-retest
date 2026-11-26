@@ -1,5 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite it."
+message: "If you use this code, please cite it using the metadata below. Each tagged release is archived on Zenodo with its own DOI."
+type: software
 title: "power-law-test-retest: test-retest reliability of the speed-curvature power law on iPad drawing"
 authors:
   - family-names: Fraser
@@ -20,3 +21,17 @@ authors:
     orcid: "https://orcid.org/0000-0003-4916-8667"
 license: MIT
 repository-code: "https://github.com/dagmarfraser/power-law-test-retest"
+abstract: >-
+  MATLAB code, with supplementary R models, for a test-retest reliability
+  study of the speed-curvature power law (the exponent beta) measured from
+  Apple Pencil drawing on an iPad. It takes raw session files to trial-level
+  beta and kinematics, between-visit reliability (ICC), and the sensitivity,
+  stability and robustness analyses.
+keywords:
+  - speed-curvature power law
+  - two-thirds power law
+  - test-retest reliability
+  - intraclass correlation
+  - motor control
+  - drawing kinematics
+  - MATLAB
