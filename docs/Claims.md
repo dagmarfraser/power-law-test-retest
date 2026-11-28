@@ -126,6 +126,18 @@ Model per shape: `Beta_SG6_IRLS ~ Visit + (1|ParticipantID) + (1|ParticipantID:V
 | K3 | Why Cursive is poor and Square is not | Cursive: 30% person x visit (content differs between visits, supports C7). Square: lowest person share of the templated shapes but 30% is trial noise, which averaging over about 30 trials removes | same | 2026-11-22 | current |
 | K4 | CATI as person-level predictor | No CATI main effect or Visit x CATI interaction in any shape (lmer all p > 0.26; brms all 95% CrIs include 0); LOO prefers the main-effects model throughout (Cursive LOO has 1 to 2 Pareto k > 0.7). No participant-level questionnaire correlation reaches p < .05 uncorrected (Pearson or Spearman, mean beta over both visits). Agrees with I1 | `mixedModel_N48_20261122_090238`, `bayesMixedModel_N48_*` | 2026-11-22 | current, exploratory |
 
+## M. Literature context (cross-domain, not group-delta evidence)
+
+Uppal et al. 2026, bioRxiv, doi 10.64898/2026.11.23.768645: fMRI test-retest. Context for the discussion only.
+
+| ID | Claim | Value | Relevance here | Date | Status |
+|---|---|---|---|---|---|
+| M1 | Design | N=25 healthy adults, 2 sessions 7 to 14 d apart, 4 tasks; ICC(3,1) only, plus group Dice and Spearman | Comparable interval to ours (A5); they report consistency only, we report ICC(A,1) and ICC(3,1) (C10) | 2026-11-28 | current |
+| M2 | Individual ROI reliability | ICC N-back 0.42 to 0.49, OASIS 0.21 to 0.27, MID and Go/No-Go < 0.15 | Templated-shape beta (0.79 to 0.88, C1 to C4) sits well above typical task-fMRI reliability | 2026-11-28 | current |
+| M3 | Task dominates pipeline | Across 12 denoising pipelines, task drove reliability more than pipeline; pipeline mattered most for the weakest tasks | Parallels H1 and H2: templated shapes move by at most 0.041, Cursive spans 0.16 to 0.61 | 2026-11-28 | current |
+| M4 | Group exceeds individual reliability | Group Dice about 0.8, Spearman > 0.95 (N-back), above individual ICC | Same pattern as F3 (rank agreement flatters individual agreement) | 2026-11-28 | current |
+| M5 | CI method not comparable | Their ICC CIs are mean +/- 1.96 SD/sqrt(N voxels), not subject-level; ours are subject-level | Do not compare CI widths directly | 2026-11-28 | current |
+
 ## L. Sample-size planning: the pilot power calculation (N=61)
 
 Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alpha = 0.05, tails = 1, power = 0.80)`, with p the between-visit ICC(A,1) of SG+IRLS beta from the analysis_2025 pilot (N=61). The same settings are used for the final run (`icc_power_analysis.R`). The calculation was set as the MSc students' exercise (January 2026). Inputs: `analysis_2025/results/IRLS_ICC_PilotData.csv`; output: `analysis_2025/results/icc_power_output.csv` (both 2026-03-15, not in this repository).
@@ -152,8 +164,8 @@ Zou (2012) via `ICC.Sample.Size::calculateIccSampleSize(p, p0 = 0.75, k = 2, alp
 | J2 | Data DOI (Zenodo or OSF) and README link | open |
 | J3 | `CITATION.cff` authors: Fraser (first), Azizi, Neal (middle two alphabetical for now), Cook (last), set 2026-11-22, all four with ORCID | current |
 | J4 | Trim `docs/AnalysisPipeline.md` for a public audience (it refers to internal notes) | open |
-| J5 | Square spatial jump: 649 points (124.57 mm at 5.209) with no time gap, noted 2026-07-16. It is a finger sample (ID302, session 2026-06-03 145850, trial 25; `touch_type` 0 then 2), removed by the Pencil filter (B3); afterwards that trial's largest step is 0.77 mm. Over all 14,388 trials of the 48 included participants, every step > 10 mm without a clock gap involved a finger sample before the filter, and none remain after it, so every remaining jump is a real pen lift handled by `detectPenLifts`. Square after the filter: 16 of 2,879 trials contain a pen lift (the July "0% gapped" figure covered 6 participants only). Source `diagnoseSpatialJumps_2026.m` (J6), 2026-11-26 | resolved 2026-11-26 |
-| J6 | Scripts not yet in this repository: `exportDataRelease_2026.m`, `diagnoseSpatialJumps_2026.m` (J5), and the SEM/tempo set (`estimateTempoF0.m`, `extractTrialTempo_2026.m`, `semFromVisitMatrix_2026.m`, `reportSEMReliability_2026.m`, `test_semFromVisitMatrix_2026.m`, `docs/SEM_Tempo_Reliability_N48.md`) | open |
+| J5 | Square spatial jump: 649 points (124.57 mm at 5.209) with no time gap, noted 2026-07-16. It is a finger sample (ID302, session 2026-06-03 145850, trial 25; `touch_type` 0 then 2), removed by the Pencil filter (B3); afterwards that trial's largest step is 0.77 mm. Over all 14,388 trials of the 48 included participants, every step > 10 mm without a clock gap involved a finger sample before the filter, and none remain after it, so every remaining jump is a real pen lift handled by `detectPenLifts`. Square after the filter: 16 of 2,879 trials contain a pen lift (the July "0% gapped" figure covered 6 participants only). Source `src/functions/diagnoseSpatialJumps_2026.m`, 2026-11-26 | resolved 2026-11-26 |
+| J6 | Scripts not yet in this repository: `exportDataRelease_2026.m`, and the SEM/tempo set (`estimateTempoF0.m`, `extractTrialTempo_2026.m`, `semFromVisitMatrix_2026.m`, `reportSEMReliability_2026.m`, `test_semFromVisitMatrix_2026.m`, `docs/SEM_Tempo_Reliability_N48.md`) | open |
 | J7 | Trial count off by one: the touch-fix diagnostic counts 14,389 trials and 13,463 clean, the final run 14,388 and 13,462 | open (minor) |
 | J8 | Whether the iPad app logs `location(in:)` or `preciseLocation(in:)` (all x,y on whole or half points) | open |
 | J9 | Pre-specification wording: "designated primary from the pilot and the 2025 protocol paper", not "preregistered", unless a timestamped registration is found | open |
