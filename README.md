@@ -72,4 +72,4 @@ The participant data are not in this repository. They will be released separatel
 
 ## Citation and licence
 
-See `CITATION.cff`. The code is released under the MIT licence (`LICENSE`).
+See `CITATION.cff`. Each tagged release is archived on Zenodo with its own DOI, which will be added here after the first release. The code is released under the MIT licence (`LICENSE`).

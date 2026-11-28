@@ -1,8 +1,16 @@
 # Analysis Pipeline: Power Law + ICC (carried forward from analysis_2025, extended to 6 pipelines)
 
-Companion to `docs/EmailIngestionPipeline.md` (data in) and
-`docs/DesignNotes.md` (k=2 vs k=3). This covers what happens after
-ingestion: trial-level power law calculation, then test-retest ICC.
+Companion to `docs/DesignNotes.md` (k=2 vs k=3). This covers what
+happens after data ingestion: trial-level power law calculation, then
+test-retest ICC.
+
+> **How to read this file.** It is a dated methods log, kept in the order
+> the work happened. Superseded numbers are left in place and marked as
+> obsolete rather than deleted, so every change to the pipeline can be
+> traced. The current N=48 numbers are those from the 2026-11-09 run
+> (`trial_level_results_20261109_112129`), and the registered claims are
+> collected in `docs/Claims.md`. Data ingestion (email attachments to
+> `data/raw/`) is documented with the data release, not here.
 
 ## What changed from analysis_2025
 
@@ -65,7 +73,7 @@ The original logic sorted a participant's sessions chronologically, then
 chunked the flat list into fixed blocks of 3 (`ceil(idx/3)`) and
 truncated the whole participant to the first `minSessions` overall. This
 silently misassigns visits whenever one visit has an extra session: for
-ID103 (4 same-day sessions in visit 1, see `docs/EmailIngestionPipeline.md`),
+ID103 (4 same-day sessions in visit 1),
 blind chunking put 4 sessions in visit 1's slot, spilling the genuine 4th
 session into visit 2's slot and losing visit 2's real third session
 entirely. Fixed by grouping into visits by same-visit proximity first
@@ -78,8 +86,7 @@ per oversized visit (e.g. `ID103 visit 1 has 4 sessions -- using first 3
 **`exactSessionsOnly` option** excludes participants whose raw session
 count doesn't exactly match `minSessions`, rather than truncating and
 processing them. Used for the first confirmatory run to exclude ID103
-(7 sessions, genuinely ambiguous which is extra -- see
-`docs/EmailIngestionPipeline.md`) and ID212 (9 sessions, not yet
+(7 sessions, genuinely ambiguous which is extra) and ID212 (9 sessions, not yet
 investigated) entirely, rather than including them with a truncation
 guess baked in:
 
@@ -213,7 +220,7 @@ reliability.
 
 ## Between-visit ICC: beta vs jerk, and where Cursive falls down
 
-**Take-home at N=48 (2026-11-03, unchanged by the 2026-11-09 finger-touch fix):** see `claude.md` section 2, "Take-home", for the agreed one-paragraph framing (templated-shape beta moderate-to-good and better than jerk; free-text Cursive poor because the stimulus differs between visits). Numbers below.
+**Take-home at N=48 (2026-11-03, unchanged by the 2026-11-09 finger-touch fix):** templated-shape beta is moderate to good and more reliable than jerk; free-text Cursive is poor because the stimulus differs between visits. Numbers below.
 
 **Final N=48 (refreshed 2026-11-09 from `icc_results_20261109_112131.csv`,
 `runN48_2026`, after the finger-touch fix; 2026-11-03 values differed by at most 0.009).** Classified by 95% CI lower bound (Koo & Li 2016),
@@ -503,13 +510,37 @@ participants still will not fix it.
   is divided by `pxPerMm` before differentiation. An early draft of
   `generateDayFigures_2026` mislabelled the axes px/s; corrected.
 
-### Still open
+### The Square 649 pt jump (open 2026-07-16, resolved 2026-11-26)
 
-Square shows a 649 px max spatial jump with **no** accompanying time gap
-(0% gapped trials). That is a discontinuity without a clock gap, so a
-different failure mode from pen lifts -- possibly touch re-registration.
-Not investigated. Worth a look given Ellipse and Square have the worst
-peak-jerk ICCs (0.15 / 0.26).
+Square showed a 649 pt (125 mm) maximum spatial jump with **no**
+accompanying clock gap, so it could not be a pen lift. It was a finger
+sample. `diagnoseSpatialJumps_2026` finds the largest sample-to-sample step
+in every trial of the 48 included participants (sorted on `touch_index`,
+edge clip 50), with and without `pencilSamplesOnly`. The 649 pt step is
+ID302, session 2026-06-03 145850, trial 25 (124.57 mm x 5.209 = 648.9 pt):
+a `touch_type` 0 sample next to a Pencil sample, clock residual -0.001 s.
+With finger samples removed, that trial's largest step is 0.77 mm. It is
+the same failure as the finger and palm touches described below.
+
+Over all trials (step > 10 mm, i.e. > 2,400 mm/s at 240 Hz):
+
+| Shape | trials | before filter | of which no clock gap | after filter | of which no clock gap |
+|---|---|---|---|---|---|
+| phi=0.4 | 2,879 | 60 | 28 | 24 | 0 |
+| phi=0.8 | 2,879 | 43 | 24 | 13 | 0 |
+| Ellipse | 2,879 | 67 | 35 | 29 | 0 |
+| Square | 2,879 | 47 | 28 | 16 | 0 |
+| Cursive | 2,872 | 2,842 | 43 | 2,842 | 0 |
+
+Before the filter every jump without a clock gap involved a finger sample
+(none were Pencil to Pencil). After it, every remaining jump coincides with
+a clock gap above the 0.0125 s lift threshold, so it is a real pen lift and
+`detectPenLifts` splits the trial there before differentiation. In Square
+these are 16 trials where the pen left the glass mid-shape. The 2026-07-16
+"0% gapped" Square figure came from 6 participants; at N=48 a few
+templated-shape trials do contain lifts. The peak-jerk ICCs that prompted
+the question (Ellipse 0.15, Square 0.26) predate the 2026-11-09 filter.
+Output: `data/processed/spatialJumps_<ts>.csv`.
 
 ## Cursive is genuinely broadband, and the 10 Hz filter does not fit it
 
@@ -771,11 +802,11 @@ interactively.
 
 ## Environment hazard: FieldTrip/GPstuff silently breaks writetable
 
-Found on the Windows machine (`Technicians`, R2025b Update 5) while
-re-exporting the student dataset. `writetable` wrote a CSV with an
+Found on a Windows machine (R2025b Update 5) while
+re-exporting the trial-level dataset. `writetable` wrote a CSV with an
 **empty header row** and reported success. Every value was correct; the
-column names were simply gone, so `readtable` downstream would hand the
-students `Var1..Var56`.
+column names were simply gone, so `readtable` downstream would return
+`Var1..Var56`.
 
 Root cause, established by bisecting the 523-entry user path:
 
@@ -951,7 +982,7 @@ line-for-line -- a rewrite that, per point 1 above, changed nothing,
 because the original formula was already equivalent.
 
 **3. The real bug: the R wrapper's parameter units, not either formula.**
-`computeICCA1_R.m` (the MATLAB->R wrapper written in this session) passed
+`computeICCA1_R.m` (the MATLAB->R wrapper) passed
 `irr::icc`'s `conf.level` parameter the value `0.05` instead of `0.95` --
 copied from the sibling `computeICC_R.m` wrapper, where the equivalent
 `psych::ICC` parameter is literally named `alpha` and 0.05 is correct
@@ -975,7 +1006,7 @@ confidence intervals in `analysis_2025/README_TestRetest.md` were computed
 with a formula now directly confirmed correct against R. The bug that
 surfaced during this validation exercise existed only in a script written
 during the validation exercise itself, and never touched any reported
-result. No numbers need rechecking or flagging to Jen on this account.
+result. No reported numbers need rechecking on this account.
 
 ## R power-analysis apparatus
 
@@ -1021,9 +1052,9 @@ alpha=0.05, power=0.80, Beta_SG6_IRLS, absolute agreement):**
 | Ellipse | 0.791 | 620 | 48 | no (ICC close to p0) |
 | Cursive | 0.385 | intractable (below p0=0.75) | 48 | no -- not an N problem |
 
-N=48 was set by the students' preregistered Pearson design, not by this
+N=48 was set by the preregistered design (G*Power ANCOVA, f = 0.5), not by this
 calculation, so these are planning numbers for future studies, not a
-failed power target (claude.md section 2). The 2026-11-03 run gave 41 / 60 / 77 / 632; the 0.001 ICC shifts from the finger-touch fix move Ellipse's N by 12, which is how sensitive it is. Interim N=45: 38 / 57 / 74 /
+failed power target. The 2026-11-03 run gave 41 / 60 / 77 / 632; the 0.001 ICC shifts from the finger-touch fix move Ellipse's N by 12, which is how sensitive it is. Interim N=45: 38 / 57 / 74 /
 577. Required N is very sensitive to how far the ICC sits above 0.75,
 which is why it rose sharply from N=31 as the ICCs settled lower.
 
@@ -1065,7 +1096,7 @@ closed by two scripts, neither a direct port.
   stay visible. Current set: `figures/*_20261109_113603.png` (N=48, after the finger-touch fix)
 
 **`generateDayFigures_2026.m`** -- the day-1/day-2 story, straight from
-the trial-level student dataset rather than pre-aggregated summaries, so
+the trial-level dataset rather than pre-aggregated summaries, so
 it shows the raw per-trial distributions:
 
 - `dayComparison_Measures_*.png` -- beta full-width over a 3x3 grid of
@@ -1096,8 +1127,8 @@ Both write 300 dpi PNGs to `figures/`. Notes worth keeping:
 ### Planned: Bayesian day 1 vs day 2 equivalence check (not yet run)
 
 The `dz` non-significance above is a frequentist absence of evidence, not
-evidence of equivalence. Captured here per Dagmar's request (chat session
-2026-08-19) so the plan isn't lost before it's scheduled as active work.
+evidence of equivalence. Recorded 2026-08-19 so the plan is not lost
+before it is scheduled.
 Facts/decisions only, nothing below has been run yet:
 
 - **Not a Welch's-t-test candidate.** Day 1 vs Day 2 is paired (same
@@ -1138,8 +1169,8 @@ Facts/decisions only, nothing below has been run yet:
 
 ### Literature note: Protzko (2026) on ICC threshold conservatism (2026-08-20)
 
-Added to Zotero by Dagmar; read in full (Study 1 + Study 2 + Discussion)
-and checked against this project's ICC choices, chat session 2026-08-20.
+Read in full (Study 1 + Study 2 + Discussion) and checked against this
+project's ICC choices on 2026-08-20.
 Citation: Protzko, J. (2026). *But r Won't Do That: The Limits of
 Standardized Covariance*. PsyArXiv preprint,
 https://osf.io/preprints/psyarxiv/qt54d_v1/.
@@ -1197,9 +1228,8 @@ borderline shapes' point estimates.
 
 ### Literature note: Tomek, Caldwell & Eisner (2026) on equivalence testing / TOST (2026-08-21)
 
-Added to Zotero by Dagmar; read in full (abstract first, then full text
-once added), checked against the planned day 1 vs day 2 equivalence
-check above, chat session 2026-08-21. Citation: Tomek, J., Caldwell, A.,
+Read in full and checked against the planned day 1 vs day 2 equivalence
+check above on 2026-08-21. Citation: Tomek, J., Caldwell, A.,
 & Eisner, D. A. (2026). Beyond "non-significant" results: Why and how to
 test for practical equivalence. *PNAS*, 123(33), e2611548123.
 https://doi.org/10.1073/pnas.2611548123
@@ -1263,7 +1293,7 @@ implicit one.**
 
 ## Test-retest stability at N=45, and exploratory trait correlations (2026-10-08)
 
-> **Obsolete numbers (2026-11-09):** this section is from the 2026-08-04 N=45 run (9.73 scale, no finger-touch filter). The current N=45 is the 45 originals of the 2026-11-09 run (`data/processed/baseline_N45/`, rebuilt by `rebuildBaselineN45_2026`); current N=48 figures are in `claude.md` section 2 and `docs/SensitivityPlan_N48.md` (amendment 2026-11-09). Kept as the dated record.
+> **Obsolete numbers (2026-11-09):** this section is from the 2026-08-04 N=45 run (9.73 scale, no finger-touch filter). The current N=45 is the 45 originals of the 2026-11-09 run (`data/processed/baseline_N45/`, rebuilt by `rebuildBaselineN45_2026`); current N=48 figures are in `docs/Claims.md` and `docs/SensitivityPlan_N48.md` (amendment 2026-11-09). Kept as the dated record.
 
 **Reproducible, no participant count hard-coded** (n is read from the data, so
 re-run after the extra participants arrive):
@@ -1316,7 +1346,7 @@ claim zero drift.** Square is borderline.
 38 of 45 participants never exceed MDC95, 5 do on one shape, 1 on two, 1 on
 three or more (about the 5% expected by chance, so no excess of unstable
 people). IDs 209 and 321 exceed it on 2+ shapes; 209 is the participant with
-the mislabelled sessions (`docs/EmailIngestionPipeline.md`), so confirm its two
+the mislabelled sessions at ingestion, so confirm its two
 visits are paired correctly before reading it as real instability. MDC95 is
 29% to 54% of the mean beta: reliable for ranking people (between-person
 comparisons), coarse for detecting change within one person. Within-visit ICC
@@ -1344,7 +1374,7 @@ from execution; the next step is to compare the raw V1 and V2 text for 202 and
 302. Spearman correlations between |change in beta| and |change in path / lifts
 / strokes / duration| across all participants are weak (0.13 to 0.18) because only
 two people drive it. The existing methods implication (a fixed repeated phrase)
-still stands. An earlier chat remark that instructing participants to keep the
+still stands. An earlier remark that instructing participants to keep the
 pen down might fix it is not supported by the free-text design and is withdrawn.
 
 **Exploratory CATI_Total and M-EDL vs Beta/Jerk** (`analyseTraitKinematics_2026`;
@@ -1362,9 +1392,9 @@ Spearman 0, one sign disagreement, so the choice barely matters here. CIs
 are about +/-0.3 wide: the earlier assumed r(CATI, beta) of 0.20 to 0.25 is
 neither supported nor excluded, and the a-path of the planned mediation (CATI
 to beta) is about 0, so there is nothing to mediate. M-EDL has 16 of 45 exact
-zeros of unknown meaning (`docs/PublicationTodo.md` section 3).
+zeros of unknown meaning (being checked against the questionnaire source).
 
-**Note on numbers quoted earlier in conversation:** a few figures were first
+**Note on ad hoc numbers:** a few figures were first
 computed ad hoc from raw trial means; the scripted versions aggregate session
 means then visit means (as `runICC_2026` does) and differ slightly for
 individuals (e.g. ID302 change in beta -0.128 scripted vs -0.132 ad hoc, ID202
@@ -1403,7 +1433,7 @@ Between-visit ICC(A,1), N=45 (`pipelineRobustness_N45_20261008_222827.csv`):
 - **Cursive is the exception and is regression-sensitive**: ICC runs from 0.143 to 0.558 across the grid, every CI is wide (lower bounds -0.157 to 0.317) and none reaches 0.75. The two LMLS pipelines are lowest (0.158, 0.143), Linear highest (0.558, 0.542), IRLS between. No cause has been tested; hypotheses to check before writing anything are LMLS non-convergence or outlier sensitivity on pen-lift-fragmented data (see the Cursive diagnosis in the N=45 stability section above). Report the 0.14 to 0.56 spread honestly as a limitation of Cursive, not as a choice of pipeline.
 - Absolute beta differs by regression but barely by filter (mean over the four templated shapes: Linear 0.205, IRLS 0.194, LMLS 0.154; Butterworth vs SG6 differ by about 0.001 to 0.002). This echoes the paper observation that regressions have different plateaus under noise and is a reason to keep claims about reliability, not absolute beta.
 
-**Caveats.** The same 45 people go through all six pipelines, so they are not six independent studies; the forest/spec-curve figure shows robustness, not replication. The bootstrap resamples participants only (not sessions or trials). Visit means average three sessions, so single-session reliability is lower. Pre-specification wording: Fraser et al. (May 2025) designates the SG + non-linear regression family before the 2026 data existed; the choice of IRLS within it rests on the analysis_2025 pilot, whose timestamp is still unconfirmed (`docs/PublicationTodo.md`). Figure: `figures/pipelineRobustness_specCurve_N45_*.png` (viewed 2026-10-08: five panels, six points each, CI bars and the 0.75 line render correctly).
+**Caveats.** The same 45 people go through all six pipelines, so they are not six independent studies; the forest/spec-curve figure shows robustness, not replication. The bootstrap resamples participants only (not sessions or trials). Visit means average three sessions, so single-session reliability is lower. Pre-specification wording: Fraser et al. (May 2025) designates the SG + non-linear regression family before the 2026 data existed; the choice of IRLS within it rests on the analysis_2025 pilot, whose timestamp is still unconfirmed. Figure: `figures/pipelineRobustness_specCurve_N45_*.png` (viewed 2026-10-08: five panels, six points each, CI bars and the 0.75 line render correctly).
 
 ## Literature note: prior test-retest work on drawing and handwriting kinematics (2026-10-08)
 
@@ -1445,7 +1475,7 @@ Between-visit ICC(A,1), N=45 (`pipelineRobustness_N45_20261008_222827.csv`):
 
 ## Finger and palm touches in the Pencil stream (2026-11-09)
 
-**What was found.** The `-enhanced.csv` files mix direct finger or palm touches (`touch_type` 0) with Apple Pencil samples (`touch_type` 2). No other value occurs. Dagmar first noticed this in 159 Ellipse trials (Pencil data check, 2026-11-03). Measured over the 48 included participants, it affects **926 of 14,389 trials** (all five shapes; phi=0.4 192, phi=0.8 181, Ellipse 159, Square 142, Cursive 252; 34 participants). The finger and the Pencil share **one** `touch_index` counter, with no index collisions, so the finger samples sit between Pencil samples (e.g. ID108 2026-07-28 113318 trial 14: Pencil at x about 865 pt, finger at x about 1176 pt, alternating). `runAnalysis_2026` de-duplicated and sorted on `touch_index` only, so these samples went straight into the trajectory. The result is 50-120 mm jumps and `time_seconds` stepping backwards.
+**What was found.** The `-enhanced.csv` files mix direct finger or palm touches (`touch_type` 0) with Apple Pencil samples (`touch_type` 2). No other value occurs. It was first noticed in 159 Ellipse trials (Pencil data check, 2026-11-03). Measured over the 48 included participants, it affects **926 of 14,389 trials** (all five shapes; phi=0.4 192, phi=0.8 181, Ellipse 159, Square 142, Cursive 252; 34 participants). The finger and the Pencil share **one** `touch_index` counter, with no index collisions, so the finger samples sit between Pencil samples (e.g. ID108 2026-07-28 113318 trial 14: Pencil at x about 865 pt, finger at x about 1176 pt, alternating). `runAnalysis_2026` de-duplicated and sorted on `touch_index` only, so these samples went straight into the trajectory. The result is 50-120 mm jumps and `time_seconds` stepping backwards.
 
 **Why the fix renumbers the index.** Dropping the finger samples leaves holes in the Pencil's `touch_index` (steps of 2 to 4), and these would appear as false gaps in `t = touch_index/fs`. After filtering, the Pencil samples are renumbered 1..n. In the 13,463 clean trials the Pencil index already steps by exactly 1 (0 exceptions), so renumbering is a no-op there and their results are unchanged. Pen lifts are still found from `time_seconds` by `detectPenLifts` (see "Pen lifts in Cursive" above).
 
@@ -1456,7 +1486,7 @@ Between-visit ICC(A,1), N=45 (`pipelineRobustness_N45_20261008_222827.csv`):
 - ICC: beta, VGF and FitCorr change by < 0.01, with no class change. Peak kinematics rise on the templated shapes (SG peak jerk +0.17 to +0.45; BW peak jerk up to +0.63; peak acceleration +0.13 to +0.34) and fall on Cursive (SG peak jerk 0.517 -> 0.400). Lower-bound class changes: peak velocity phi=0.8 moderate -> good (SG and BW), Cursive SG moderate; peak acceleration phi=0.4/0.8 poor -> moderate; peak jerk phi=0.8 poor -> moderate. Means and medians change by <= 0.005 (BW mean jerk up to +0.04).
 - Caveat: the "before" values from the diagnostic match the 3 Nov trial file to 0.7% relative for beta, but FitCorr differs by up to 33% on a few trials. The definitive numbers are the full re-run.
 
-**Confirmed by the full re-run (2026-11-09).** Dagmar ran `runN48_2026('stage','all')` with the fix in place (`trial_level_results_20261109_112129`, `icc_results_20261109_112131`). `verifyTouchFixRun_2026` confirms the 13,462 clean trials are identical to 3 Nov, the 926 fixed trials match the diagnostic, and the official ICCs equal the interim ones (`touchFixRunCheck_ICC_20261109_113047.csv`). `refreshDownstream_2026` then re-ran trait, stability, shape-5 diagnostic, pipeline robustness, note evidence and figures. `diffRunOutputs_2026('20261103_15','20261109_11')` lists every changed output cell (`runDiff_20261103_15_vs_20261109_11.csv`); `summariseKeyNumbers_2026` and `makeDocTables_2026` regenerate the numbers and tables quoted in `claude.md` and this file. Beta conclusions are unchanged (largest headline shift: Zou N for Ellipse 632 -> 620). The handover was regenerated from this run.
+**Confirmed by the full re-run (2026-11-09).** `runN48_2026('stage','all')` was run with the fix in place (`trial_level_results_20261109_112129`, `icc_results_20261109_112131`). `verifyTouchFixRun_2026` confirms the 13,462 clean trials are identical to 3 Nov, the 926 fixed trials match the diagnostic, and the official ICCs equal the interim ones (`touchFixRunCheck_ICC_20261109_113047.csv`). `refreshDownstream_2026` then re-ran trait, stability, shape-5 diagnostic, pipeline robustness, note evidence and figures. `diffRunOutputs_2026('20261103_15','20261109_11')` lists every changed output cell (`runDiff_20261103_15_vs_20261109_11.csv`); `summariseKeyNumbers_2026` and `makeDocTables_2026` regenerate the numbers and tables quoted in this file. Beta conclusions are unchanged (largest headline shift: Zou N for Ellipse 632 -> 620). The handover was regenerated from this run.
 
 ## Retest interval (2026-11-09)
 
@@ -1497,7 +1527,7 @@ powerAnalysisICC_R();
 %    cited above (also writes timestamped CSVs to data/processed/)
 [thetaTable, iccSymmetryTable] = reportNoteEvidence_2026();
 
-% 6. Export the one-row-per-trial student CSV + its README data dictionary
+% 6. Export the one-row-per-trial CSV + its README data dictionary
 %    (guards its own header -- see the FieldTrip/GPstuff hazard above)
 exportStudentDataset_2026();
 
